@@ -17,239 +17,92 @@
  */
 
 #include <stdint.h>
+#include <stm32f4xx.h>
+
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
-uint8_t  dummy_8bit  = 0;
-uint16_t dummy_16bit = 0;
-uint32_t dummy_32bit = 0;
 
-uint16_t dummy_16bit_dec  = 0;
-uint16_t dummy_16bit_hex = 0;
-uint16_t dummy_16bit_bin = 0;
 
-uint8_t overflow_demo = 0;
 
-uint8_t a = 0;
-int8_t  b = 0;
-int8_t  c = 0;
-
-uint8_t x = 0;
-uint8_t y = 0;
-
-uint8_t result;
-
-uint8_t r1 = 0;
-uint8_t r2 = 0;
-uint8_t r3 = 0;
-uint8_t r4 = 0;
-
-uint8_t div_result = 0;
-uint8_t mod_result = 0;
-uint8_t mul_result = 0;
-
-uint8_t sum = 0 ;
-uint8_t val = 3;
-
-uint8_t left1  = 0;
-uint8_t left2  = 0;
-uint8_t left3  = 0;
-uint8_t right1 = 0;
-
-uint8_t desborleft= 0;
-
-uint8_t counter=0;
-
-uint16_t sum2=0;
-
-uint8_t input = 0;
-uint8_t output = 0;
 
 
 int main(void)
 {
 
+	/* Operador AND: la máscara que revela */
 
-	dummy_16bit_dec = 32;
-    dummy_16bit_hex = 0x20;
-    dummy_16bit_bin = 0b100000;
+	uint8_t value  = 0b10110101;
+	uint8_t mask   = 0b00001111;
+	uint8_t result  = 0b0;
 
-    /*expomiendo el caso overflow
-     */
+	result = value & mask;
 
-	dummy_8bit = 255;
-    dummy_16bit = 255;
-    dummy_32bit = 255;
-
-    /*incremento el valor de la variable dummy_8bit en 1 y lo cargo
-     * en la varible overflow_demo
-     */
-    overflow_demo = dummy_8bit + 1;
-    overflow_demo = overflow_demo + 1;
-
-    overflow_demo = 735;
-
-    /*declarando variable donde el signo importa*/
-
-    a = 200; /*sera 200*/
-    b = 200; /*sera 200*/
-    c = -1; /*sera en binario 111111 osea 255 en decimal por lo que en hexa es 0xff*/
-
-    /* aricmetica mental en hexa */
-
-    result = 0x0F + 0x01; /*es 15+1=16 0x10*/
-    result = 0xFF + 0x01; /*es 255+1 se desborda osea es 0x00*/
-    result = 0xA0 + 0x5F; /*es 160+95=255 osea 0xff*/
-    result = 0xA0 + 0x60; /*es 160+96=256 osea se desborda 0x00*/
-
-
-    /* construyendo bit a bit */
-
-    x = 0x01;
-    x = 0x02;
-    x = 0x04;
-    x = 0x08;
-    x = 0x10;
-    x = 0x20;
-    x = 0x40;
-    x = 0x80;
-
-    /*bang y logica boleana*/
-
-    a=5;
-    b=0;
-    c=255;
-
-    r1 = !a;
-    r2 = !b;
-    r3 = !c;
-    r4 = ~c;
-
-    /*semana 01*/
-
-	/*Operadores aricmeticos*/
-
-	a          = 17; /**/
-	b          = 5;
-	div_result = a / b;  /*deberia dar 3 con reciduo 2*/
-	mod_result = a % b;  /*es el residuo de el de arriba*/
-	mul_result = a * b;  /*deberia ser 85*/
-
-	c=div_result*b+mod_result;		/* debe dar el mismo a*/
-
-	/* desbordamiento aricmetico */
-
-	x   = 200;
-	y   = 100;
-	sum = x + y;
-
-	/* Operadores de desplazamiento como multiplicación y división */
-
-	val=3;
-
-	left1  = val << 1;
-	left2  = val << 2;
-	left3  = val << 3;
-	right1 = val >> 1;
-
-	desborleft = 128;
-	desborleft = desborleft << 1;
-
-    /* pruebas de if/else */
-
-	x=3;
-    y=0;
-    result=0;
-
-    if (x>0){
-    	result=255;
-    }
-
-    if (x<y){
-    result=128;
-    }
-    else{
-    result=0;
-    }
-
-    /* El bucle for como contador */
-
-    for(counter=0;counter<9;counter++){
-
-      }
-
-    for(counter=0;counter<8;counter+=2){
-
-    }
-
-    for(counter=10;counter<2;counter--){
-
-      }
-
-    /* bucle while */
-
-    x=1;
-    sum=0;
-
-    while (x <= 10) {
-        sum += x;
-        x++;
-    }                   /*es 55*/
-
-    y=1;
+	mask = 0b01111000;
+	result = value & mask;
 
 
 
-    while (y <= 100) {
-        sum2 += y;
-        y++;
-    }                   /*se espera que sea 5050 y no cabria en una variable de uint pues esta tiene un maximo de 255*/
+	/* Operador OR: la máscara que establece */
 
-    /* bucle do-while */
+	value  = 0b10100000;
+	mask   = 0b00000101;
+	result = value | mask;  /* 1 y 1 darian 1, 0 y 0 dan 0 */
+
+    /* Operador NOT: el complemento */
+
+	uint8_t a       = 0b00001111;
+	uint8_t result1 = 0b0;
+	result1 = ~a;
+
+	uint8_t b       = 0b10100101;
+	uint8_t result2 = 0b0;
+	result2 = ~b;
+
+	value = 0b11111111;
+	value = ~value;        /* este metodo invierte todos los bits */
+
+	value = 0b11111111;
+	value &= ~0b00000011;  /* este metodo simplemente invierte los bists seleccionados en ~()  */
+
+	/* Operador XOR: el toggle */
+
+	value   = 0b10110011;
+	mask    = 0b00001111;
+	result1 = value ^ mask;
+	result2 = result1 ^ mask;
+
+	uint8_t ejem = 0b11111110;
+	ejem ^= (1 << 2);
 
 
-        result = 0;
-        x = 10;
+	/* Combinando operadores: el patrón completo */
 
-        while (x < 5) {
-            result = 42;
-        }                     /*en while se revisa primero elcondicional y si cumple se ejecuta si no no se ejecuta*/
 
-        y = 10;
+	uint8_t simulated_register = 0x00;
 
-        do {
-            result = 42;
-        } while (y < 5);    /* en do-while se ejecuta primero y luego se revisa el condicional */
+	simulated_register |= 0b00011000;
 
-       /* switch-case */
+	simulated_register &= ~0b00010000;
 
-        input=4;
-        output=0;
+	simulated_register ^= 0b00010000;
 
-        switch (input) {
+	simulated_register ^= 0b00010000;
 
-                case 1:
-                    output = 10;
-                    break;
+	/* Primer registro real: habilitando el reloj */
 
-                case 2:
-                    output = 20;
-                    break;
+	RCC->AHB1ENR |= (1 << 0);
 
-                case 3:
-                    output = 30;
-                    break;
+	/* Primer LED en GPIOA Pin 5 */
 
-                case 4:
-                    output = 40;
-                    break;
+	GPIOA->MODER &= ~(3 << 10);
+	GPIOA->MODER |=  (1 << 10);
 
-                default:
-                    output = 255;
-                    break;
-            }
+	GPIOA->ODR |= (1 << 5);
+
+
 
 
 
