@@ -32,77 +32,59 @@
 int main(void)
 {
 
-	/* Operador AND: la máscara que revela */
+	/* Identificando periféricos en sus buses */
 
-	uint8_t value  = 0b10110101;
-	uint8_t mask   = 0b00001111;
-	uint8_t result  = 0b0;
+         /*AHB1 TENIA GPIOA(bit 0), GPIOB(bit 1) Y GPIOAC (bit 2), ADEMAS AHB1 NO TIENE NINGUN REGISTRO DE RELOJ DE LOS MENCIONADOS (GPIOA, GPIOB, GPIOC, USART2, TIM2, SPI1) */
 
-	result = value & mask;
+	//RCC->AHB1ENR |= (0b111 << 0);
+	//RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
 
-	mask = 0b01111000;
-	result = value & mask;
+	     /* APB1 SOLO TENIA A USART2(bit 17) Y TIM2(bit 0) */
 
+	//RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+	//RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
 
+	     /* APB2 SOLO TENIA A SPI1(bit 12) */
 
-	/* Operador OR: la máscara que establece */
-
-	value  = 0b10100000;
-	mask   = 0b00000101;
-	result = value | mask;  /* 1 y 1 darian 1, 0 y 0 dan 0 */
-
-    /* Operador NOT: el complemento */
-
-	uint8_t a       = 0b00001111;
-	uint8_t result1 = 0b0;
-	result1 = ~a;
-
-	uint8_t b       = 0b10100101;
-	uint8_t result2 = 0b0;
-	result2 = ~b;
-
-	value = 0b11111111;
-	value = ~value;        /* este metodo invierte todos los bits */
-
-	value = 0b11111111;
-	value &= ~0b00000011;  /* este metodo simplemente invierte los bists seleccionados en ~()  */
-
-	/* Operador XOR: el toggle */
-
-	value   = 0b10110011;
-	mask    = 0b00001111;
-	result1 = value ^ mask;
-	result2 = result1 ^ mask;
-
-	uint8_t ejem = 0b11111110;
-	ejem ^= (1 << 2);
+	//RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
 
 
-	/* Combinando operadores: el patrón completo */
+	/* Habilitando y deshabilitando relojes de periféricos */
 
+	RCC->AHB1ENR |= (0b11 << 0);
 
-	uint8_t simulated_register = 0x00;
+	RCC->AHB1ENR &= ~(0b10 << 0);  /* FUNCIONA :) ESTA VIVO*/
 
-	simulated_register |= 0b00011000;
+	/* Leyendo el registro MODER */
 
-	simulated_register &= ~0b00010000;
+	//VALOR GPIOA->MODER (0xa8000000)
 
-	simulated_register ^= 0b00010000;
+	GPIOA->MODER &= ~(0b11 << 10); /* PA LIMPIAR */
 
-	simulated_register ^= 0b00010000;
+	GPIOA->MODER |= (0b01 << 10);  /* ACTIVO EL OUTPUT DE SE PIN */
 
-	/* Primer registro real: habilitando el reloj */
+	/* Explorando el conjunto completo de registros GPIO */
 
-	RCC->AHB1ENR |= (1 << 0);
+	GPIOA->OTYPER = 0x00000000;   /* MATAMOS EL NUMERO Y LO MANDAMOS TODOA CERO */
+	GPIOA->OTYPER &= ~(1 << 5);   /* CAMBIAMOS RE CONFIRMAMOS QUE EL bit 5  SEA CERO */
 
-	/* Primer LED en GPIOA Pin 5 */
+	GPIOA->OSPEEDR = 0x00000000;  /* reseteamos */
 
-	GPIOA->MODER &= ~(3 << 10);
-	GPIOA->MODER |=  (1 << 10);
+	GPIOA->PUPDR = 0x00000000;    /* TAMBIEN RESETEAMOS */
 
 	GPIOA->ODR |= (1 << 5);
 
+	GPIOA->ODR &= ~(1 << 5);
 
+
+	/*  Configurando un pin de entrada  */
+
+	RCC->AHB1ENR |= (1 << 2);  /* activar reloj */
+
+	GPIOC->MODER &= ~(0b11 << 26); /* poner cero (0) a 27-26, confuguracion input */
+
+	GPIOC->PUPDR &= ~(0b11 << 26); /* EN EL REGISTRO PUPDR TAMBIES ES 27-26 CON ESTO TAMBIEN LO PONEMOS A CERO */
+    GPIOC->PUPDR |= (0b1 << 26);   /* MANDAMOS A 1 EL bit 26 configuracion pull-up*/
 
 
 
